@@ -1,12 +1,15 @@
+import { useTheme, useThemeStyles } from '../../theme/ThemeProvider';
 import { useCallback, useState } from 'react';
 import { View, Text, TextInput, FlatList, StyleSheet, Pressable } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { getTasks } from '../../database/taskRepository';
 import TaskCard from '../../components/TaskCard';
-import { categories, colors } from '../../constants/theme';
+import { categories } from '../../constants/theme';
 import { listingTypes } from '../../constants/services';
 
 export default function Explore() {
+  const {colors,scheme}=useTheme();
+  const s=useThemeStyles(createStyles);
   const params=useLocalSearchParams();
   const [search,setSearch]=useState(''),[tasks,setTasks]=useState([]),[error,setError]=useState('');
   const [loading,setLoading]=useState(true),[sort,setSort]=useState('Newest');
@@ -24,7 +27,7 @@ export default function Explore() {
   const filters=(values,selected,onChange,prefix='') => <View style={s.filters}>{values.map(value =>
     <Pressable accessibilityRole="button" accessibilityLabel={prefix + value} accessibilityState={{selected:selected===value}}
       key={value} style={[s.chip,selected===value && s.selected]} onPress={() => onChange(value)}>
-      <Text style={{color:selected===value ? 'white' : colors.text}}>{value}</Text>
+      <Text style={{color:selected===value ? colors.onPrimary : colors.text}}>{value}</Text>
     </Pressable>)}</View>;
   return <View style={s.page}><FlatList data={sorted} keyExtractor={t => String(t.id)}
     contentContainerStyle={{padding:20,paddingBottom:32}} keyboardShouldPersistTaps="handled"
@@ -32,7 +35,7 @@ export default function Explore() {
     ListHeaderComponent={<>
       <Text style={s.title}>Learn a skill. Hire campus talent.</Text>
       <Text style={s.subtitle}>Discover student-led courses, classes and professional services.</Text>
-      <TextInput accessibilityLabel="Search services" placeholder="Search Java, photography, design..." value={search} onChangeText={setSearch} style={s.input}/>
+      <TextInput placeholderTextColor={colors.muted} selectionColor={colors.primary} keyboardAppearance={scheme} accessibilityLabel="Search services" placeholder="Search Java, photography, design..." value={search} onChangeText={setSearch} style={s.input}/>
       <Text style={s.label}>Category</Text>{filters(categories,category,value => router.setParams({category:value}),'Category: ')}
       <Text style={s.label}>Offering</Text>{filters(['All',...listingTypes],listingType,value => router.setParams({type:value}),'Type: ')}
       <View style={s.sort}>{['Newest','Price: low','Price: high'].map(value =>
@@ -42,17 +45,18 @@ export default function Explore() {
       <Text style={s.count} accessibilityLiveRegion="polite">{loading ? 'Finding services...' : `${tasks.length} ${tasks.length===1 ? 'service' : 'services'} found`}</Text>
       {!!error && <Text accessibilityRole="alert" style={{color:colors.danger}}>{error}</Text>}
     </>}
-    ListEmptyComponent={!loading && !error ? <Text>No matching services. Try another search or category.</Text> : null}/>
+    ListEmptyComponent={!loading && !error ? <Text style={s.bodyText}>No matching services. Try another search or category.</Text> : null}/>
   </View>;
 }
-const s=StyleSheet.create({
+const createStyles=colors=>StyleSheet.create({
+  bodyText:{color:colors.text},error:{color:colors.danger,lineHeight:22},
   page:{flex:1,backgroundColor:colors.background,width:'100%',maxWidth:820,alignSelf:'center'},
   title:{fontSize:25,fontWeight:'800',color:colors.text,marginBottom:8},
   subtitle:{color:colors.muted,marginBottom:20,lineHeight:22},
-  input:{backgroundColor:'white',borderRadius:12,padding:14,borderWidth:1,borderColor:colors.border,minHeight:48},
+  input:{color:colors.text,backgroundColor:colors.surface,borderRadius:12,padding:14,borderWidth:1,borderColor:colors.border,minHeight:48},
   label:{fontWeight:'700',color:colors.text,marginTop:18,marginBottom:10},
   filters:{flexDirection:'row',flexWrap:'wrap',gap:8},
-  chip:{paddingHorizontal:12,paddingVertical:12,borderRadius:20,backgroundColor:'#E8E8F0',minHeight:44},
+  chip:{paddingHorizontal:12,paddingVertical:12,borderRadius:20,backgroundColor:colors.chip,minHeight:44},
   selected:{backgroundColor:colors.primary},
   sort:{flexDirection:'row',flexWrap:'wrap',gap:12,marginTop:12},
   count:{color:colors.muted,marginVertical:14},

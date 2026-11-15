@@ -1,9 +1,12 @@
+import { useTheme, useThemeStyles } from '../theme/ThemeProvider';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { colors, categoryIcons } from '../constants/theme';
+import { categoryIcons } from '../constants/theme';
 import { formatPrice } from '../constants/services';
 export default function TaskCard({ task }) {
+  const {colors}=useTheme();
+  const s=useThemeStyles(createStyles);
   return <Pressable accessibilityRole="button" accessibilityLabel={`View ${task.title}`}
     style={({pressed}) => [s.card,pressed && {opacity:0.7}]}
     onPress={() => router.push({pathname:'/task/[id]',params:{id:String(task.id)}})}>
@@ -21,12 +24,13 @@ export default function TaskCard({ task }) {
     </View>
   </Pressable>;
 }
-const s=StyleSheet.create({
+const createStyles=colors=>StyleSheet.create({
+  bodyText:{color:colors.text},error:{color:colors.danger,lineHeight:22},
   card:{backgroundColor:colors.surface,padding:20,borderRadius:18,marginBottom:14,borderWidth:1,borderColor:colors.border},
   row:{flexDirection:'row',alignItems:'center',gap:8},
-  icon:{padding:9,backgroundColor:'#EEECFF',borderRadius:12},
+  icon:{padding:9,backgroundColor:colors.primarySurface,borderRadius:12},
   category:{flex:1,fontSize:12,color:colors.muted},
-  status:{fontSize:10,color:'#21835B',backgroundColor:'#E9F7EF',padding:6,borderRadius:6},
+  status:{fontSize:10,color:colors.success,backgroundColor:colors.successSurface,padding:6,borderRadius:6},
   title:{fontSize:18,fontWeight:'700',color:colors.text,marginTop:14},
   description:{marginVertical:10,color:colors.muted,lineHeight:21},
   price:{fontSize:17,fontWeight:'800',color:colors.primary},

@@ -58,3 +58,26 @@ test('fresh installations seed provider-led listings once and never resurrect de
     assert.equal(connection.prepare('SELECT COUNT(*) AS n FROM tasks').get().n,0);
   }finally{connection.close();}
 });
+
+test('appearance preference persists independently of listings and fails safely on read-only storage',async()=>{
+  const {migrateDatabase,seedDatabase}=await import('../src/database/migrations.js');
+  const {readThemePreference,writeThemePreference}=await import('../src/theme/preferences.js');
+  const {connection,adapter}=database();
+  try{
+    await migrateDatabase(adapter);await seedDatabase(adapter);
+    assert.equal(await readThemePreference(adapter),'system');
+    await writeThemePreference(adapter,'dark');
+    await seedDatabase(adapter);
+    assert.equal(await readThemePreference(adapter),'dark');
+    assert.equal(connection.prepare('SELECT COUNT(*) AS n FROM tasks').get().n,10);
+    assert.equal(connection.prepare("SELECT value FROM metadata WHERE key='seeded'").get().value,'1');
+    await assert.rejects(writeThemePreference(adapter,'invalid'),/Invalid appearance/);
+    assert.equal(await readThemePreference(adapter),'dark');
+    connection.exec('PRAGMA query_only=ON');
+    await assert.rejects(writeThemePreference(adapter,'light'));
+    assert.equal(await readThemePreference(adapter),'dark');
+    connection.exec('PRAGMA query_only=OFF');
+    connection.exec("UPDATE metadata SET value='unknown' WHERE key='theme-preference'");
+    assert.equal(await readThemePreference(adapter),'system');
+  }finally{connection.close();}
+});

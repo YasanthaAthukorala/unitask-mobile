@@ -1,12 +1,28 @@
 import { Stack } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { ActivityIndicator, View, Text, StyleSheet, Pressable } from 'react-native';
-import { initializeDatabase } from '../database/database';
-import { colors } from '../constants/theme';
+import { AppThemeProvider, useTheme, useThemeStyles } from '../theme/ThemeProvider';
+
 export default function RootLayout() {
- const [ready,setReady]=useState(false),[error,setError]=useState(''),[attempt,setAttempt]=useState(0);
- useEffect(()=>{let active=true;initializeDatabase().then(()=>{if(active)setReady(true)}).catch(()=>{if(active)setError('Local storage could not start. Please retry.')});return()=>{active=false};},[attempt]);
- if(!ready)return <View style={s.loading}>{error?<><Text>{error}</Text><Pressable accessibilityRole="button" onPress={()=>{setError('');setAttempt(a=>a+1)}} style={s.retry}><Text style={{color:'white'}}>Retry</Text></Pressable></>:<><ActivityIndicator size="large" color={colors.primary}/><Text style={{marginTop:16}}>Opening your campus...</Text></>}</View>;
- return <Stack id={undefined} screenOptions={{headerShown:false,contentStyle:{backgroundColor:colors.background}}}><Stack.Screen name="auth" options={{headerShown:true,title:"Account"}}/><Stack.Screen name="notifications" options={{headerShown:true,title:"Notifications"}}/><Stack.Screen name="index"/><Stack.Screen name="(tabs)"/><Stack.Screen name="task/[id]" options={{headerShown:true,title:'Service details'}}/><Stack.Screen name="edit-task/[id]" options={{headerShown:true,title:'Edit service'}}/></Stack>;
+  return <AppThemeProvider><AppLayout/></AppThemeProvider>;
 }
-const s=StyleSheet.create({loading:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:colors.background,padding:24},retry:{backgroundColor:colors.primary,padding:14,borderRadius:12,marginTop:16}});
+function AppLayout() {
+  const {colors,ready,error,retry} = useTheme();
+  const s = useThemeStyles(createStyles);
+  if (!ready) return <View style={s.loading}>
+    {error ? <><Text style={s.text}>{error}</Text>
+      <Pressable accessibilityRole="button" onPress={retry} style={s.retry}><Text style={{color:colors.onPrimary}}>Retry</Text></Pressable>
+    </> : <><ActivityIndicator size="large" color={colors.primary}/><Text style={[s.text,{marginTop:16}]}>Opening your campus...</Text></>}
+  </View>;
+  return <Stack id={undefined} screenOptions={{headerShown:false,contentStyle:{backgroundColor:colors.background},
+    headerStyle:{backgroundColor:colors.surface},headerTintColor:colors.text}}>
+    <Stack.Screen name="auth" options={{headerShown:true,title:'Account'}}/>
+    <Stack.Screen name="notifications" options={{headerShown:true,title:'Notifications'}}/>
+    <Stack.Screen name="index"/><Stack.Screen name="(tabs)"/>
+    <Stack.Screen name="task/[id]" options={{headerShown:true,title:'Service details'}}/>
+    <Stack.Screen name="edit-task/[id]" options={{headerShown:true,title:'Edit service'}}/>
+  </Stack>;
+}
+const createStyles = colors => StyleSheet.create({
+  loading:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:colors.background,padding:24},
+  text:{color:colors.text},retry:{backgroundColor:colors.primary,padding:14,borderRadius:12,marginTop:16},
+});

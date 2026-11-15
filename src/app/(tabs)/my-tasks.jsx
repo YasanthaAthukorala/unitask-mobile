@@ -1,10 +1,11 @@
+import { useThemeStyles } from '../../theme/ThemeProvider';
 import { useCallback, useState } from 'react';
 import { ScrollView, Text, StyleSheet } from 'react-native';
 import { useFocusEffect, Link } from 'expo-router';
 import { getTasks } from '../../database/taskRepository';
 import TaskCard from '../../components/TaskCard';
-import { colors } from '../../constants/theme';
 export default function MyTasks() {
+  const s=useThemeStyles(createStyles);
   const [tasks,setTasks]=useState([]),[error,setError]=useState(''),[loading,setLoading]=useState(true);
   useFocusEffect(useCallback(() => {
     let active=true;setLoading(true);
@@ -16,12 +17,13 @@ export default function MyTasks() {
   return <ScrollView style={s.page} contentContainerStyle={s.content}>
     <Text style={s.heading}>My Services</Text>
     <Text style={s.help}>Manage the skills, courses and classes you offer.</Text>
-    {!!error && <Text accessibilityRole="alert">{error}</Text>}
-    {loading ? <Text>Loading your services...</Text> : tasks.length ? tasks.map(t => <TaskCard key={t.id} task={t}/>) :
-      <><Text>No services yet. Share a skill using the Offer tab.</Text><Link href="/create" style={s.link}>Offer a service</Link></>}
+    {!!error && <Text accessibilityRole="alert" style={s.error}>{error}</Text>}
+    {loading ? <Text style={s.bodyText}>Loading your services...</Text> : tasks.length ? tasks.map(t => <TaskCard key={t.id} task={t}/>) :
+      <><Text style={s.bodyText}>No services yet. Share a skill using the Offer tab.</Text><Link href="/create" style={s.link}>Offer a service</Link></>}
   </ScrollView>;
 }
-const s=StyleSheet.create({
+const createStyles=colors=>StyleSheet.create({
+  bodyText:{color:colors.text},error:{color:colors.danger,lineHeight:22},
   page:{flex:1,backgroundColor:colors.background},
   content:{padding:20,width:'100%',maxWidth:820,alignSelf:'center',paddingBottom:40},
   heading:{fontSize:24,fontWeight:'800',marginBottom:12,color:colors.text},help:{color:colors.muted,lineHeight:22,marginBottom:20},

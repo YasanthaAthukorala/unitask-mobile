@@ -1,0 +1,76 @@
+const {test,expect}=require('@playwright/test');
+
+test('appearance persists, covers screens, follows the system and preserves a form draft',async({page})=>{
+  const errors=[];
+  page.on('pageerror',error=>errors.push(error.message));
+  page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+  const text=(value)=>page.getByText(value,{exact:true}).filter({visible:true});
+  const darkBackground='rgb(17, 18, 28)',darkSurface='rgb(28, 29, 45)',darkText='rgb(240, 239, 248)';
+  const lightBackground='rgb(246, 247, 251)';
+  await page.emulateMedia({colorScheme:'light'});
+  await page.goto('/profile');
+  await expect(page.getByRole('radio',{name:'System',exact:true})).toBeChecked();
+  await expect(text('Light mode active')).toBeVisible();
+
+  await page.getByRole('radio',{name:'Dark',exact:true}).click();
+  await expect(page.getByRole('radio',{name:'Dark',exact:true})).toBeChecked();
+  await expect(text('Dark mode active')).toBeVisible();
+  await expect(page.locator('body')).toHaveCSS('background-color',darkBackground);
+  await expect(text('Student Profile')).toHaveCSS('color',darkText);
+  await page.screenshot({path:'docs/screenshots/appearance-dark-mobile.png',fullPage:true});
+  await page.reload();
+  await expect(page.getByRole('radio',{name:'Dark',exact:true})).toBeChecked();
+  await expect(text('Dark mode active')).toBeVisible();
+
+  await page.goto('/home');
+  await expect(page.getByRole('button',{name:'Browse services',exact:true})).toBeVisible();
+  await expect(page.locator('body')).toHaveCSS('background-color',darkBackground);
+  await expect(page.getByRole('button',{name:'View Presentation Slide Design',exact:true})).toHaveCSS('background-color',darkSurface);
+  await page.screenshot({path:'docs/screenshots/home-dark-mobile.png',fullPage:true});
+  await page.goto('/explore');
+  await expect(page.getByLabel('Search services',{exact:true})).toHaveCSS('background-color',darkSurface);
+  await expect(page.getByLabel('Search services',{exact:true})).toHaveCSS('color',darkText);
+  await page.goto('/create');
+  await expect(page.getByLabel('Service or course title',{exact:true})).toHaveCSS('background-color',darkSurface);
+  await expect(page.getByLabel('Service or course title',{exact:true})).toHaveCSS('color',darkText);
+  await page.goto('/auth');
+  await expect(page.getByLabel('Email',{exact:true})).toHaveCSS('background-color',darkSurface);
+  await expect(page.getByLabel('Email',{exact:true})).toHaveCSS('color',darkText);
+  await page.goto('/notifications');
+  await expect(text('No notifications yet.')).toHaveCSS('color',darkText);
+  await page.goto('/my-tasks');
+  await expect(text('No services yet. Share a skill using the Offer tab.')).toHaveCSS('color',darkText);
+
+  await page.goto('/profile');
+  await page.getByRole('radio',{name:'Light',exact:true}).click();
+  await expect(page.getByRole('radio',{name:'Light',exact:true})).toBeChecked();
+  await expect(page.locator('body')).toHaveCSS('background-color',lightBackground);
+  await page.emulateMedia({colorScheme:'dark'});
+  await expect(text('Light mode active')).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('radio',{name:'Light',exact:true})).toBeChecked();
+  await expect(text('Light mode active')).toBeVisible();
+  await expect(page.locator('body')).toHaveCSS('background-color',lightBackground);
+  await page.goto('/home');
+  await expect(page.getByRole('button',{name:'Browse services',exact:true})).toBeVisible();
+  await page.screenshot({path:'docs/screenshots/home-light-mobile.png',fullPage:true});
+
+  await page.goto('/profile');
+  await page.getByRole('radio',{name:'System',exact:true}).click();
+  await expect(page.getByRole('radio',{name:'System',exact:true})).toBeChecked();
+  await expect(text('Dark mode active')).toBeVisible();
+  await page.emulateMedia({colorScheme:'light'});
+  await expect(text('Light mode active')).toBeVisible();
+  await expect(page.locator('body')).toHaveCSS('background-color',lightBackground);
+  await page.goto('/create');
+  const title=page.getByLabel('Service or course title',{exact:true});
+  await title.fill('My unsaved Java class');
+  await page.emulateMedia({colorScheme:'dark'});
+  await expect(title).toHaveCSS('background-color',darkSurface);
+  await expect(title).toHaveValue('My unsaved Java class');
+  await page.screenshot({path:'docs/screenshots/offer-dark-mobile.png',fullPage:true});
+  await page.emulateMedia({colorScheme:'light'});
+  await expect(title).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(title).toHaveValue('My unsaved Java class');
+  expect(errors).toEqual([]);
+});

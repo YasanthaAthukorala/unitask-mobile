@@ -1,11 +1,14 @@
+import { useTheme, useThemeStyles } from '../theme/ThemeProvider';
 import { getSession } from '../services/api';
 import { useState } from 'react';
 import { ScrollView, Text, TextInput, Pressable, StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
-import { categories, colors } from '../constants/theme';
+import { categories } from '../constants/theme';
 import { listingTypes, priceUnits } from '../constants/services';
 import { validateService } from '../utils/serviceDetails';
 
 export default function TaskForm({ title: heading, initial = undefined, submitLabel, onSubmit }) {
+  const {colors,scheme}=useTheme();
+  const s=useThemeStyles(createStyles);
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [category, setCategory] = useState(initial?.category ?? 'Education');
@@ -33,11 +36,11 @@ export default function TaskForm({ title: heading, initial = undefined, submitLa
   const choices = (values, selected, onChange) => <View style={s.choices}>{values.map(value =>
     <Pressable accessibilityRole="button" accessibilityState={{selected:selected === value}} key={value}
       disabled={saving} style={[s.chip, selected === value && s.selected]} onPress={() => onChange(value)}>
-      <Text style={{color:selected === value ? 'white' : colors.text}}>{value}</Text>
+      <Text style={{color:selected === value ? colors.onPrimary : colors.text}}>{value}</Text>
     </Pressable>)}</View>;
   const input = (label, value, setter, options = {}) => <>
     <Text style={s.label}>{label}</Text>
-    <TextInput accessibilityLabel={label} placeholder={label} value={value} onChangeText={value => {setError('');setter(value);}}
+    <TextInput placeholderTextColor={colors.muted} selectionColor={colors.primary} keyboardAppearance={scheme} accessibilityLabel={label} placeholder={label} value={value} onChangeText={value => {setError('');setter(value);}}
       editable={!saving} style={s.input} {...options}/>
   </>;
   return <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -66,19 +69,20 @@ export default function TaskForm({ title: heading, initial = undefined, submitLa
     </ScrollView>
   </KeyboardAvoidingView>;
 }
-const s = StyleSheet.create({
+const createStyles=colors=>StyleSheet.create({
+  bodyText:{color:colors.text},
   page:{flex:1,backgroundColor:colors.background},
   content:{padding:20,width:'100%',maxWidth:760,alignSelf:'center',paddingBottom:48},
   heading:{fontSize:24,fontWeight:'800',marginBottom:12,color:colors.text},
   section:{fontSize:19,fontWeight:'700',color:colors.text,marginTop:18,marginBottom:10},
   help:{color:colors.muted,lineHeight:21,marginBottom:18},
   label:{marginBottom:8,fontWeight:'700',color:colors.text},
-  input:{backgroundColor:'white',padding:14,borderRadius:12,marginBottom:16,borderWidth:1,borderColor:colors.border,minHeight:48},
+  input:{color:colors.text,backgroundColor:colors.surface,padding:14,borderRadius:12,marginBottom:16,borderWidth:1,borderColor:colors.border,minHeight:48},
   description:{height:112,textAlignVertical:'top'},
   choices:{flexDirection:'row',flexWrap:'wrap',gap:8,marginBottom:20},
-  chip:{padding:12,backgroundColor:'#E8E8F0',borderRadius:20,minHeight:44,justifyContent:'center'},
+  chip:{padding:12,backgroundColor:colors.chip,borderRadius:20,minHeight:44,justifyContent:'center'},
   selected:{backgroundColor:colors.primary},
   error:{color:colors.danger,lineHeight:22,marginBottom:12},
   button:{backgroundColor:colors.primary,padding:16,borderRadius:12,alignItems:'center',marginTop:8,minHeight:50},
-  buttonText:{color:'white',fontWeight:'700'},
+  buttonText:{color:colors.onPrimary,fontWeight:'700'},
 });

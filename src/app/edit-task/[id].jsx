@@ -1,3 +1,4 @@
+import { useTheme } from '../../theme/ThemeProvider';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -6,6 +7,7 @@ import TaskForm from '../../components/TaskForm';
 import { notify } from '../../utils/dialog';
 
 export default function EditTask() {
+  const {colors}=useTheme();
   const { id } = useLocalSearchParams();
   const [task, setTask] = useState(null);
 
@@ -18,7 +20,7 @@ export default function EditTask() {
       .catch((e) => notify('Error', String(e)));
   }, [id]);
 
-  if (!task) return <Text style={{ padding: 20 }}>Loading service...</Text>;
+  if (!task) return <Text style={{ padding: 20,color:colors.text }}>Loading service...</Text>;
 
   async function save(values) {
     await updateTask(id, values);

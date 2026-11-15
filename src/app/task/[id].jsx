@@ -1,14 +1,16 @@
+import { useTheme, useThemeStyles } from '../../theme/ThemeProvider';
 import { useCallback, useState } from 'react';
 import { ScrollView, Text, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useFocusEffect, router, Link } from 'expo-router';
 import { getTask, toggleFavorite, changeStatus, deleteTask } from '../../database/taskRepository';
 import { getSession, request } from '../../services/api';
-import { colors } from '../../constants/theme';
 import { formatPrice } from '../../constants/services';
 import { normalizeSriLankanPhone, isValidEmail } from '../../utils/serviceDetails';
 import { confirmAction } from '../../utils/dialog';
 
 export default function TaskDetails() {
+  const {colors,scheme}=useTheme();
+  const s=useThemeStyles(createStyles);
   const {id}=useLocalSearchParams();
   const [task,setTask]=useState(undefined), [error,setError]=useState(''), [busy,setBusy]=useState(false);
   const [stars,setStars]=useState('5'), [comment,setComment]=useState('');
@@ -28,15 +30,15 @@ export default function TaskDetails() {
     finally{setBusy(false);}
   }
   const button=(label,onPress,danger=false) => <Pressable accessibilityRole="button" disabled={busy}
-    style={[s.button,danger && {backgroundColor:colors.danger},busy && {opacity:0.5}]} onPress={onPress}>
-    <Text style={s.white}>{label}</Text>
+    style={[s.button,danger && {backgroundColor:colors.dangerButton},busy && {opacity:0.5}]} onPress={onPress}>
+    <Text style={[s.white,danger && {color:colors.onDanger}]}>{label}</Text>
   </Pressable>;
   const phone=normalizeSriLankanPhone(task?.contactPhone);
   const email=task?.contactEmail?.trim() || '';
   return <ScrollView style={s.page} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
     {!!error && <Text accessibilityRole="alert" style={{color:colors.danger}}>{error}</Text>}
-    {task===undefined ? <Text>Loading service...</Text> : !task ? <>
-      <Text>Service unavailable.</Text>{button('Retry',load)}
+    {task===undefined ? <Text style={s.bodyText}>Loading service...</Text> : !task ? <>
+      <Text style={s.bodyText}>Service unavailable.</Text>{button('Retry',load)}
       {button('Back to campus',() => router.replace('/home'))}
     </> : <>
       <Text style={s.meta}>{task.category} / {task.listingType || 'Service'} / {task.status}</Text>
@@ -65,8 +67,8 @@ export default function TaskDetails() {
       </>}
       {getSession() && !task.is_mine && task.status==='Completed' && <>
         <Text style={s.section}>Your review (1-5 stars)</Text>
-        <TextInput accessibilityLabel="Stars" style={s.input} keyboardType="numeric" value={stars} onChangeText={setStars}/>
-        <TextInput accessibilityLabel="Review comment" style={s.input} placeholder="Optional comment" maxLength={300} value={comment} onChangeText={setComment}/>
+        <TextInput placeholderTextColor={colors.muted} selectionColor={colors.primary} keyboardAppearance={scheme} accessibilityLabel="Stars" style={s.input} keyboardType="numeric" value={stars} onChangeText={setStars}/>
+        <TextInput placeholderTextColor={colors.muted} selectionColor={colors.primary} keyboardAppearance={scheme} accessibilityLabel="Review comment" style={s.input} placeholder="Optional comment" maxLength={300} value={comment} onChangeText={setComment}/>
         {button('Submit review',() => {
           if(!/^[1-5]$/.test(stars)){setError('Choose a whole number from 1 to 5.');return;}
           action(() => request(`/api/tasks/${id}/rate`,{method:'POST',body:JSON.stringify({stars:Number(stars),comment})}));
@@ -78,15 +80,16 @@ export default function TaskDetails() {
         <Text style={s.meta}>Booking status</Text>
         {['Available','Hired','In Progress','Completed'].map(status => <Pressable accessibilityRole="button"
           key={status} disabled={busy || task.status===status}
-          style={[s.button,task.status===status && {backgroundColor:'#21835B'}]}
-          onPress={() => action(() => changeStatus(id,status))}><Text style={s.white}>{status}</Text></Pressable>)}
+          style={[s.button,task.status===status && {backgroundColor:colors.successButton}]}
+          onPress={() => action(() => changeStatus(id,status))}><Text style={[s.white,task.status===status && {color:colors.onSuccess}]}>{status}</Text></Pressable>)}
         {button('Delete my service',() => confirmAction('Delete service','This permanently removes your listing.','Delete',() =>
           action(async () => {await deleteTask(id);router.replace('/my-tasks');})),true)}
       </>}
     </>}
   </ScrollView>;
 }
-const s=StyleSheet.create({
+const createStyles=colors=>StyleSheet.create({
+  bodyText:{color:colors.text},error:{color:colors.danger,lineHeight:22},
   page:{flex:1,backgroundColor:colors.background},content:{padding:24,width:'100%',maxWidth:760,alignSelf:'center',paddingBottom:48},
   title:{fontSize:28,fontWeight:'800',color:colors.text,marginTop:12},
   meta:{color:colors.muted,marginTop:16,lineHeight:22},
@@ -98,6 +101,6 @@ const s=StyleSheet.create({
   hint:{color:colors.muted,lineHeight:22,marginVertical:8},
   contactLink:{color:colors.primary,fontWeight:'700',fontSize:16,paddingVertical:14},
   button:{backgroundColor:colors.primary,padding:16,borderRadius:12,marginTop:12,alignItems:'center',minHeight:48},
-  white:{color:'white',fontWeight:'700'},
-  input:{padding:14,borderWidth:1,borderColor:colors.border,borderRadius:12,marginTop:12,backgroundColor:'white'},
+  white:{color:colors.onPrimary,fontWeight:'700'},
+  input:{color:colors.text,padding:14,borderWidth:1,borderColor:colors.border,borderRadius:12,marginTop:12,backgroundColor:colors.surface},
 });
