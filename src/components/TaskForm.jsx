@@ -1,3 +1,4 @@
+import { getSession } from '../services/api';
 import { useState } from 'react';
 import { ScrollView, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { categories, colors } from '../constants/theme';
@@ -17,6 +18,8 @@ export default function TaskForm({ title: heading, initial = undefined, submitLa
   const [category, setCategory] = useState(initial?.category ?? 'Education');
   const [budget, setBudget] = useState(initial?.budget != null ? String(initial.budget) : '');
   const [deadline, setDeadline] = useState(initial?.deadline ?? '');
+  const [contactEmail,setContactEmail]=useState(initial?.contactEmail || '');
+  const [contactPhone,setContactPhone]=useState(initial?.contactPhone || '');
   const [saving, setSaving] = useState(false);
 
   async function save() {
@@ -29,9 +32,11 @@ export default function TaskForm({ title: heading, initial = undefined, submitLa
       notify('Validation', 'Deadline must be a real date in YYYY-MM-DD format (or leave it empty)');
       return;
     }
+    if(getSession() && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail.trim()) || !/^\+94\d{9}$/.test(contactPhone.trim()))){notify('Contact details','Enter a valid email and Sri Lankan phone (+94 followed by 9 digits).');return;}
+    if(saving)return;
     setSaving(true);
     try {
-      await onSubmit({ title, description, category, budget, deadline });
+      await onSubmit({ title, description, category, budget, deadline, contactEmail, contactPhone });
     } catch (e) {
       notify('Error', String(e));
     } finally {
@@ -54,6 +59,7 @@ export default function TaskForm({ title: heading, initial = undefined, submitLa
       </ScrollView>
       <TextInput style={s.input} placeholder="Budget in LKR" keyboardType="numeric" value={budget} onChangeText={setBudget} />
       <TextInput style={s.input} placeholder="Deadline (YYYY-MM-DD)" value={deadline} onChangeText={setDeadline} autoCapitalize="none" />
+      {getSession() && <><TextInput accessibilityLabel="Contact email" style={s.input} placeholder="Contact email" autoCapitalize="none" keyboardType="email-address" value={contactEmail} onChangeText={setContactEmail}/><TextInput accessibilityLabel="Contact phone" style={s.input} placeholder="Phone (+94771234567)" keyboardType="phone-pad" value={contactPhone} onChangeText={setContactPhone}/></>}
       <Pressable style={[s.button, saving && { opacity: 0.6 }]} onPress={save} disabled={saving}>
         <Text style={s.buttonText}>{submitLabel}</Text>
       </Pressable>
@@ -70,4 +76,5 @@ const s = StyleSheet.create({
   button: { backgroundColor: colors.primary, padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 12 },
   buttonText: { color: 'white', fontWeight: '700' },
 });
+
 

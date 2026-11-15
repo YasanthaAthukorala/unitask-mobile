@@ -1,18 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TextInput, ScrollView, FlatList, StyleSheet, Pressable } from 'react-native';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { getTasks } from '../../database/taskRepository';
 import TaskCard from '../../components/TaskCard';
 import { categories, colors } from '../../constants/theme';
-export default function Explore() {
- const params=useLocalSearchParams();
- const [search,setSearch]=useState(''); const [category,setCategory]=useState('All'); const [tasks,setTasks]=useState([]);
+export default function Explore(){
+ const params=useLocalSearchParams();const [search,setSearch]=useState(''),[category,setCategory]=useState('All'),[tasks,setTasks]=useState([]),[error,setError]=useState(''),[loading,setLoading]=useState(true),[sort,setSort]=useState('Newest');
  useEffect(()=>{if(categories.includes(String(params.category)))setCategory(String(params.category));},[params.category]);
- // 'active' flag stops an older, slower query from overwriting newer results
- useFocusEffect(useCallback(()=>{let active=true;getTasks({search,category}).then(r=>{if(active)setTasks(r)}).catch(console.error);return()=>{active=false};},[search,category]));
- return <View style={s.page}><TextInput placeholder="Search tasks..." value={search} onChangeText={setSearch} style={s.input}/>
- <ScrollView horizontal style={{flexGrow:0}} showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingVertical:10}}>{categories.map(c=><Pressable key={c} onPress={()=>setCategory(c)} style={[s.chip,category===c&&s.selected]}><Text style={{color:category===c?'white':colors.text}}>{c}</Text></Pressable>)}</ScrollView>
- <Text style={s.count}>{tasks.length} tasks found</Text><ScrollView>{tasks.map(t=><TaskCard key={t.id} task={t}/>)}{tasks.length===0&&<Text>No matching tasks.</Text>}</ScrollView></View>;
+ useFocusEffect(useCallback(()=>{let active=true;setLoading(true);const timer=setTimeout(()=>{getTasks({search,category}).then(r=>{if(active){setTasks(r);setError('')}}).catch(e=>{if(active)setError(e.message)}).finally(()=>{if(active)setLoading(false)});},180);return()=>{active=false;clearTimeout(timer)};},[search,category]));
+ const sorted=[...tasks].sort((a,b)=>sort==='Budget: low'?a.budget-b.budget:sort==='Budget: high'?b.budget-a.budget:0);
+ return <View style={s.page}><Text style={s.title}>Find your next opportunity</Text><Text style={s.subtitle}>Small tasks. Real impact. All around campus.</Text><TextInput accessibilityLabel="Search tasks" placeholder="Search tasks..." value={search} onChangeText={setSearch} style={s.input}/><ScrollView horizontal style={{flexGrow:0}} showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingVertical:14}}>{categories.map(c=><Pressable accessibilityRole="button" accessibilityState={{selected:category===c}} key={c} onPress={()=>setCategory(c)} style={[s.chip,category===c&&s.selected]}><Text style={{color:category===c?'white':colors.text}}>{c}</Text></Pressable>)}</ScrollView><View style={{flexDirection:'row',gap:8,marginBottom:12}}>{['Newest','Budget: low','Budget: high'].map(v=><Pressable accessibilityRole="button" key={v} onPress={()=>setSort(v)}><Text style={{color:sort===v?colors.primary:colors.muted,fontSize:12,padding:6}}>{v}</Text></Pressable>)}</View><Text style={s.count}>{loading?'Finding tasks...':`${tasks.length} tasks found`}</Text>{!!error&&<Text accessibilityRole="alert" style={{color:colors.danger}}>{error}</Text>}<FlatList data={sorted} keyExtractor={t=>String(t.id)} renderItem={({item})=><TaskCard task={item}/>} ListEmptyComponent={!loading&&!error?<Text>No matching tasks. Try another search or category.</Text>:null}/></View>;
 }
-const s=StyleSheet.create({page:{flex:1,backgroundColor:colors.background,padding:16},input:{backgroundColor:'white',borderRadius:12,padding:14,borderWidth:1,borderColor:colors.border},chip:{paddingHorizontal:14,paddingVertical:9,borderRadius:20,backgroundColor:'#E8E8F0',marginRight:8},selected:{backgroundColor:colors.primary},count:{color:colors.muted,marginVertical:10}});
-
+const s=StyleSheet.create({page:{flex:1,backgroundColor:colors.background,padding:20,width:'100%',maxWidth:820,alignSelf:'center'},title:{fontSize:24,fontWeight:'800',color:colors.text,marginBottom:8},subtitle:{color:colors.muted,marginBottom:20},input:{backgroundColor:'white',borderRadius:12,padding:14,borderWidth:1,borderColor:colors.border},chip:{paddingHorizontal:14,paddingVertical:10,borderRadius:20,backgroundColor:'#E8E8F0',marginRight:8},selected:{backgroundColor:colors.primary},count:{color:colors.muted,marginBottom:14}});

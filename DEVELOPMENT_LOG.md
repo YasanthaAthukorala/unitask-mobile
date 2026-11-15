@@ -21,3 +21,8 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - Moved routes and supporting code into src; enabled checking JavaScript/JSX.
 - Refreshed campus home and task cards; lint tool installation in progress.
 - Initial recovery commit pushed successfully (32aab3d).
+
+- Inspected web API contracts: auth, owner CRUD, hiring, ratings and notifications. Adding optional online mode using EXPO_PUBLIC_API_URL; session token is memory-only. Offline SQLite demo retained.
+
+- Online screens implemented: auth, owner CRUD, hire, reviews, notification polling/read actions. Live API not configured; online verification remains required.
+- Browser tooling installation and Expo web startup in progress. Search uses debounce and FlatList.
