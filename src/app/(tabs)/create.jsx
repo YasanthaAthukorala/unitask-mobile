@@ -10,9 +10,9 @@ export default function Create() {
   async function save(values) {
     await addTask(values);
     setFormKey((k) => k + 1);
-    notify('Saved', getSession()?'Task published to UniTask':'Task stored offline');
+    notify('Saved', getSession()?'Service published to UniTask':'Service saved on this device');
     router.navigate('/(tabs)/my-tasks');
   }
-  return <TaskForm key={formKey} title="Create New Task" submitLabel={getSession()?'Publish task':'Save Task Offline'} onSubmit={save} />;
+  return <TaskForm key={formKey} title="Offer a Service" submitLabel={getSession()?'Publish service':'Save service on this device'} onSubmit={save} />;
 }
 

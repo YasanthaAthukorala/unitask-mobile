@@ -71,3 +71,50 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - Opened localhost in the user's browser. Startup logs: .expo/recovery-preview.log and .expo/recovery-preview-errors.log (ignored by Git).
 - Existing final screenshots and successful offline workflow verification remain valid; live backend/device validation still requires the user's API and devices.
 - Future recovery: read the latest section, check for a process/listener before starting a duplicate, and use the Windows preview command in README.md.
+
+
+## Service marketplace implementation - 2026-11-15
+- User requested a provider-led campus marketplace for paid services, courses and classes, including Sri Lankan phone numbers and email contacts.
+- Working on feature/service-marketplace. Preserve existing listings and favorites with an additive SQLite migration; retain the original API routes and preserve new metadata through a readable description footer for compatibility with the existing backend.
+- Form, contact validation, repository and migration implementation started. Next: marketplace screens, focused migration/contact/API/browser verification, screenshots, lint/typecheck, commit/push and preview refresh.
+
+
+## Service marketplace verified - 2026-11-15
+- Implemented and committed the marketplace source/tests as f24be07 on feature/service-marketplace.
+- Replaced task-facing screens with Browse, Offer, My Services and Service details; added Service/Course/Class types, Photography, LKR price units, availability and provider name.
+- New and edited listings require an email and Sri Lankan mobile/landline phone in both modes. Local/international formats normalize to +94 without truncation; details show selectable contacts and Call/Email links.
+- Existing SQLite listings, favorites, statuses and deadlines survive the additive versioned migration. New installations seed ten provider-led examples without real contact numbers; deleted seeds never return.
+- Original backend API endpoints/field allowlist remain compatible: additional service metadata round-trips through a readable description footer. No backend deployment or native dependencies were added.
+- Validation passed: npx expo lint; npx tsc --noEmit; npm test (6 tests covering contacts, API compatibility and real SQLite migrations); npm run test:web (1 workflow passed, final capture run 20.2 seconds, no page or console errors).
+- Browser workflow verified type/category/search filters, favorites, invalid email/phone rejection, paid-course creation, normalized contact links, persistence across reload, contact editing with a landline, completion and deletion.
+- Fixed a missing-contact render warning discovered by the browser check. Refreshed and visually reviewed six screenshots, including provider form/details; strict UTF-8 validation passed for all 27 source/test files and whitespace checks passed.
+- Current preview: http://localhost:8081/home, Expo session 61365, server PID 2216; CI=1 EXPO_OFFLINE=1 --max-workers 2. Restart after source edits and inspect the listener before launching another process.
+- Remaining external validation: deployed API integration and real Android/iOS dialer/email behavior. Shared publishing and in-app hiring require the configured backend; offline demo listings stay on the current device.
+
+
+## Light/dark appearance implementation - 2026-11-15
+- User requested light and dark modes. Implementing System/Light/Dark selection in Profile, shared theme context and palettes, SQLite metadata persistence, Expo Router navigation themes, themed system UI/status bar, and all existing screens/inputs/cards. No dependencies added.
+- Implementation on feature/service-marketplace; next: lint/typecheck, focused persistence/system-theme browser checks, marketplace regression, screenshots and commit/push.
+
+
+## Light/dark appearance verified - 2026-11-15
+- Committed implementation/tests as c853532 on feature/service-marketplace.
+- Profile > Appearance offers System (default), Light and Dark. Choice persists in the existing SQLite metadata table across reload/restart and is independent of listings/accounts.
+- Shared palettes/context and memoized style factories cover home, browse, listing cards/details, offer/edit forms, profile, authentication, notifications, loading/retry screens, headers and tab navigation.
+- Expo Router ThemeProvider/DarkTheme/DefaultTheme are imported from expo-router for SDK 58. Expo StatusBar and SystemUI follow the selected mode; React Native Appearance uses the documented auto override for native System mode, and iOS inputs receive keyboardAppearance.
+- No dependencies, native folders or database schema changes were needed. Existing automatic userInterfaceStyle and installed expo-system-ui are retained.
+- Fixed issues found by required checks: the theme scheme type annotation, synchronous startup effect state updates, and checked-state accessibility forwarding in React Native Web (explicit aria-checked with native accessibilityState).
+- Final npx expo lint and npx tsc --noEmit passed. npm test passed all 7 tests, including real SQLite preference persistence, safe read-only storage failure and seeded-listing preservation.
+- Both Playwright workflows passed in 49.0 seconds with no page/console errors: appearance save/reload, manual overrides, live system changes, screen/input/card colors and unsaved draft preservation; marketplace course/contact CRUD regression also passed.
+- Captured and visually reviewed four new appearance screenshots; refreshed six existing marketplace captures. README documents the controls and comparison.
+- Preview remains at http://localhost:8081 (Expo session 1908), using CI=1 EXPO_OFFLINE=1 --max-workers 2. Restart after source edits.
+- Physical Android/iOS system bars, keyboard and native appearance rendering remain unverified on devices; browser coverage and SDK-aware type checking passed.
+
+
+## Marketplace and appearance merged to main - 2026-11-15
+- User requested merging the branches and committing the result.
+- The earlier feature/mobile-expo-refresh branch was already included in main.
+- Merged all four commits from feature/service-marketplace (through e401583) into main with an explicit merge commit, preserving the feature history.
+- No merge conflicts; merged application source, dependencies and tests match the verified feature branch exactly.
+- Fresh validation passed: npx expo lint, npx tsc --noEmit, and npm test (7 tests). The identical feature source previously passed both appearance and marketplace browser workflows.
+- Updated README to identify main as the branch containing marketplace, provider contact and light/dark/system appearance features.

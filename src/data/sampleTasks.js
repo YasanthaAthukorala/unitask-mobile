@@ -1,12 +1,14 @@
+// Example providers have no live phone/email; only real user-entered listings
+// expose contact links. Never seed a stranger's reachable phone number.
 export const sampleTasks = [
-  ['Calculus Tutoring','Help with calculus revision','Education',3500,'2026-11-20','Amal'],
-  ['Poster Design','Create an event poster','Graphic Design',2000,'2026-11-22','Nimali'],
-  ['Python Debugging','Fix beginner Python errors','Programming',1500,'2026-11-18','Kasun'],
-  ['Assignment Formatting','Format a report professionally','Documentation',800,'2026-11-25','Sahan'],
-  ['Video Editing','Edit a short university event video','Multimedia',2500,'2026-11-28','Tharushi'],
-  ['Campus Book Delivery','Deliver books within campus','Delivery',500,'2026-11-19','Dinuka'],
-  ['English Conversation Practice','One-hour English speaking session','Education',1200,'2026-11-26','Ishara'],
-  ['Logo Design','Simple logo for student club','Graphic Design',3000,'2026-12-01','Ravindu'],
-  ['React UI Help','Help improve a React component','Programming',2200,'2026-11-30','Piumi'],
-  ['Presentation Slides','Design ten simple presentation slides','Documentation',1800,'2026-11-27','Malith']
+  { title: 'Java Individual Classes', description: 'I teach Java fundamentals, OOP and practical coding in one-to-one lessons for campus students.', category: 'Education', budget: 1500, student_name: 'Kasun', listingType: 'Class', priceUnit: 'Per class', availability: 'Weekday evenings, online or on campus' },
+  { title: 'Campus Event Photography', description: 'I photograph campus events, graduation portraits and student club activities.', category: 'Photography', budget: 5000, student_name: 'Nimali', listingType: 'Service', priceUnit: 'Per session', availability: 'Weekends, by appointment' },
+  { title: 'Calculus Tutoring', description: 'I offer individual calculus revision with worked examples and exam practice.', category: 'Education', budget: 2000, student_name: 'Amal', listingType: 'Class', priceUnit: 'Per hour', availability: 'Tuesday and Thursday evenings' },
+  { title: 'Poster Design', description: 'I design posters for student events and small businesses, including two revisions.', category: 'Graphic Design', budget: 2000, student_name: 'Ravindu', listingType: 'Service', priceUnit: 'Per project', availability: 'Discuss a delivery date before booking' },
+  { title: 'Python Debugging', description: 'I help you understand Python errors and debug your own code through a guided session.', category: 'Programming', budget: 1500, student_name: 'Sahan', listingType: 'Service', priceUnit: 'Per hour', availability: 'Online, weekday evenings' },
+  { title: 'Video Editing', description: 'I edit short campus event videos with captions, music and colour correction.', category: 'Multimedia', budget: 2500, student_name: 'Tharushi', listingType: 'Service', priceUnit: 'Per project', availability: 'Available this semester' },
+  { title: 'English Conversation Course', description: 'I offer a four-session spoken English course with small-group conversation practice.', category: 'Education', budget: 4800, student_name: 'Ishara', listingType: 'Course', priceUnit: 'Per course', availability: 'Saturday mornings, online' },
+  { title: 'Logo Design', description: 'I create a simple logo and social media profile image for your student club.', category: 'Graphic Design', budget: 3000, student_name: 'Dinuka', listingType: 'Service', priceUnit: 'Per project', availability: 'By appointment' },
+  { title: 'React UI Mentoring', description: 'I teach component design and help you improve your React interface in a one-to-one class.', category: 'Programming', budget: 2200, student_name: 'Piumi', listingType: 'Class', priceUnit: 'Per hour', availability: 'Monday and Wednesday evenings' },
+  { title: 'Presentation Slide Design', description: 'I design ten clear, professional presentation slides using your own content.', category: 'Documentation', budget: 1800, student_name: 'Malith', listingType: 'Service', priceUnit: 'Per project', availability: 'Contact me to agree on a schedule' },
 ];
