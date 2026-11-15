@@ -31,6 +31,18 @@ Run `npm run web` and open **http://localhost:8081** (or the port printed by Exp
 
 Screenshots come from the running Expo web application at a mobile viewport. Desktop preview: [home screenshot](docs/screenshots/home-desktop.png).
 
+## Appearance
+
+Open **Profile > Appearance** and choose **System**, **Light** or **Dark**. System is the default and follows device/browser appearance changes while the app is open. Explicit light/dark choices override the device preference and persist across app restarts in the existing SQLite metadata table.
+
+The theme covers screens, listing cards, form fields, placeholders, headers, tab navigation, notifications, and the native status bar. Switching appearance does not reset forms, accounts, listings or favorites. No additional dependencies are needed.
+
+| Light mode | Dark mode |
+| --- | --- |
+| ![Light home](docs/screenshots/home-light-mobile.png) | ![Dark home](docs/screenshots/home-dark-mobile.png) |
+
+[Appearance selector](docs/screenshots/appearance-dark-mobile.png) ? [Dark service form](docs/screenshots/offer-dark-mobile.png)
+
 ## Run locally
 
 Use Node.js 22.13 or newer and npm. This repository uses `package-lock.json`.
@@ -75,9 +87,9 @@ npx expo-doctor
 
 Unit tests cover phone/email validation, API contact/metadata round trips, preservation of an old SQLite database, migration idempotency and one-time seeding. Database tests use Node's built-in SQLite. API tests mock transport rather than a deployed server.
 
-Browser tests use installed Microsoft Edge by default. Alternatively install Chromium with `npx playwright install chromium` and set `PLAYWRIGHT_CHANNEL=chromium`. The workflow checks filters, favorites, invalid contacts, publishing a paid course, contact links, reload persistence, owner edits, status changes and deletion; it also captures the screenshots above. It does not place calls or send email. Physical Android/iOS link handling and live backend behavior require separate device/server validation.
+Browser tests use installed Microsoft Edge by default. Alternatively install Chromium with `npx playwright install chromium` and set `PLAYWRIGHT_CHANNEL=chromium`. The marketplace workflow checks filters, favorites, invalid contacts, publishing a paid course, contact links, reload persistence, owner edits, status changes and deletion. The appearance workflow verifies saved manual choices, live system changes, themed screens/inputs and draft preservation. Both capture the screenshots above. It does not place calls or send email. Physical Android/iOS appearance rendering, system bars, keyboard/link handling and live backend behavior require separate device/server validation.
 
-Validation on 2026-11-15: lint, JavaScript typecheck, all 6 unit/database/API tests and the browser workflow passed. All six screenshots were refreshed and visually reviewed.
+Validation on 2026-11-15: lint, JavaScript typecheck, all 7 unit/database/API tests and both browser workflows passed. Appearance captures were visually reviewed and the marketplace screenshots refreshed.
 
 ## Source layout
 
@@ -87,6 +99,7 @@ src/components/   Shared listing cards and service form
 src/constants/    Theme, categories, offering types and price units
 src/database/     SQLite migration/seeding and repository/API adapter
 src/services/     API transport and memory-only session
+src/theme/        Shared appearance state and persistent preferences
 src/data/         Offline sample services, courses and classes
 src/utils/        Contact validation, API compatibility and dialogs
 tests/            Unit, database, API contract and browser checks

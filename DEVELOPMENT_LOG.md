@@ -90,3 +90,22 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - Fixed a missing-contact render warning discovered by the browser check. Refreshed and visually reviewed six screenshots, including provider form/details; strict UTF-8 validation passed for all 27 source/test files and whitespace checks passed.
 - Current preview: http://localhost:8081/home, Expo session 61365, server PID 2216; CI=1 EXPO_OFFLINE=1 --max-workers 2. Restart after source edits and inspect the listener before launching another process.
 - Remaining external validation: deployed API integration and real Android/iOS dialer/email behavior. Shared publishing and in-app hiring require the configured backend; offline demo listings stay on the current device.
+
+
+## Light/dark appearance implementation - 2026-11-15
+- User requested light and dark modes. Implementing System/Light/Dark selection in Profile, shared theme context and palettes, SQLite metadata persistence, Expo Router navigation themes, themed system UI/status bar, and all existing screens/inputs/cards. No dependencies added.
+- Implementation on feature/service-marketplace; next: lint/typecheck, focused persistence/system-theme browser checks, marketplace regression, screenshots and commit/push.
+
+
+## Light/dark appearance verified - 2026-11-15
+- Committed implementation/tests as c853532 on feature/service-marketplace.
+- Profile > Appearance offers System (default), Light and Dark. Choice persists in the existing SQLite metadata table across reload/restart and is independent of listings/accounts.
+- Shared palettes/context and memoized style factories cover home, browse, listing cards/details, offer/edit forms, profile, authentication, notifications, loading/retry screens, headers and tab navigation.
+- Expo Router ThemeProvider/DarkTheme/DefaultTheme are imported from expo-router for SDK 58. Expo StatusBar and SystemUI follow the selected mode; React Native Appearance uses the documented auto override for native System mode, and iOS inputs receive keyboardAppearance.
+- No dependencies, native folders or database schema changes were needed. Existing automatic userInterfaceStyle and installed expo-system-ui are retained.
+- Fixed issues found by required checks: the theme scheme type annotation, synchronous startup effect state updates, and checked-state accessibility forwarding in React Native Web (explicit aria-checked with native accessibilityState).
+- Final npx expo lint and npx tsc --noEmit passed. npm test passed all 7 tests, including real SQLite preference persistence, safe read-only storage failure and seeded-listing preservation.
+- Both Playwright workflows passed in 49.0 seconds with no page/console errors: appearance save/reload, manual overrides, live system changes, screen/input/card colors and unsaved draft preservation; marketplace course/contact CRUD regression also passed.
+- Captured and visually reviewed four new appearance screenshots; refreshed six existing marketplace captures. README documents the controls and comparison.
+- Preview remains at http://localhost:8081 (Expo session 1908), using CI=1 EXPO_OFFLINE=1 --max-workers 2. Restart after source edits.
+- Physical Android/iOS system bars, keyboard and native appearance rendering remain unverified on devices; browser coverage and SDK-aware type checking passed.
