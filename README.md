@@ -31,7 +31,7 @@ For a physical device, connect the phone and computer to the same network. SDK 5
 
 **Offline demo (default):** SQLite persists sample listings, your created tasks, edits, status changes, and favorites on the current device. Ten listings seed once. Search, category filtering, budget sorting, task details, owner-only editing/deletion, and four task statuses work without a server. Browser SQLite requires WebAssembly and cross-origin isolation; Metro is configured with the required headers. Clearing site/app storage resets the demo.
 
-**Online accounts:** copy `.env.example` to `.env.local`, set `EXPO_PUBLIC_API_URL` to your running UniTask Express API origin, and restart Expo. Open Profile ? Sign in / Register. Online mode uses the web API for registration/login, shared listings, owner CRUD, hiring, completed-gig reviews, and notifications (refreshed every 30 seconds while the screen is open). Contact email and Sri Lankan phone format are validated when posting online. Favorites and deadlines belong to the offline demo; the web API does not provide these fields.
+**Online accounts:** copy `.env.example` to `.env.local`, set `EXPO_PUBLIC_API_URL` to your running UniTask Express API origin, and restart Expo. Open Profile > Sign in / Register. Online mode uses the web API for registration/login, shared listings, owner CRUD, hiring, completed-gig reviews, and notifications (refreshed every 30 seconds while the screen is open). Contact email and Sri Lankan phone format are validated when posting online. Favorites and deadlines belong to the offline demo; the web API does not provide these fields.
 
 ```dotenv
 EXPO_PUBLIC_API_URL=https://your-unitask-api.example.com
@@ -46,6 +46,7 @@ npx expo lint
 npx tsc --noEmit
 npx expo install --check
 npx expo-doctor
+npm run test:api
 # Start Expo web first, then run the browser workflow:
 npx playwright test
 ```
@@ -62,10 +63,22 @@ src/database/     SQLite initialization and repository/API adapter
 src/services/     API transport and memory-only session
 src/data/         Offline sample tasks
 src/utils/        Cross-platform dialogs
- tests/           Browser workflow checks
- docs/screenshots/ Actual application captures
+tests/           Browser workflow checks
+docs/screenshots/ Actual application captures
 ```
 
 ## Shutdown recovery
 
 Read [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) first, then run `git status`, `git log -5 --oneline`, and restart Expo if needed. The log records milestones, checks, limitations and next steps; logical commits are pushed to the feature branch throughout development.
+
+### Windows preview recovery
+
+If Metro stalls before opening its port on this machine, run this PowerShell command:
+
+```powershell
+$env:CI='1'; $env:EXPO_OFFLINE='1'; npx expo start --web --port 8081 --max-workers 2
+```
+
+CI mode disables automatic reloads; restart Expo after source changes. Clear the variables in a new terminal for normal development.
+
+Validation: lint, JavaScript typecheck, SDK dependency alignment, all 20 Expo Doctor checks, API adapter contract test, and the offline browser workflow passed during development. API contract tests use a mocked transport; they do not verify a deployed backend.

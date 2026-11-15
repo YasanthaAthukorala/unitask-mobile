@@ -40,3 +40,21 @@ Read this file, git status, git log, then inspect any running Expo process befor
 
 - Expo Doctor: 20/20 checks passed. API transport contract test passed (mock fetch; not live backend).
 - Windows Metro watcher stalls after crawl; testing CI=1 EXPO_OFFLINE=1 startup, max-workers 2, session 59472. Next poll this session, then run npx playwright test.
+
+## Latest recovery state
+- Offline browser workflow PASSED, screenshots captured under docs/screenshots; visually reviewed mobile home and create screens.
+- Fixed source files saved by Windows in ANSI; normalized them to UTF-8. Final screenshot/test rerun pending after restart.
+- Working Expo preview uses CI=1 EXPO_OFFLINE=1 and max-workers 2 because native Windows watching stalled. Current session 4936, localhost:8081. CI mode needs manual restart after edits.
+- README documents online setup, limitations, test commands and Windows startup workaround.
+- Next: final browser rerun and lint/typecheck, commit screenshots and remaining source, push, open localhost in browser.
+
+
+## Final verification - 2026-11-15
+- Resumed the saved checkpoint and committed the remaining mobile fixes as a4442c6: home safe-area handling, Account/Notifications stack headers, corrected labels and punctuation, UTF-8 recovery script, and package test commands.
+- Passed fresh checks: npx expo lint, npx tsc --noEmit, npm run test:api (1 passed), and npm run test:web (1 passed in 2.6 minutes, no browser page errors).
+- Browser workflow verified category/search filtering, favorites, task creation, reload persistence, owner editing, completion, deletion, and restoration of the ten demo listings.
+- Refreshed and visually inspected all four real browser screenshots in docs/screenshots (mobile home, explore, create, and desktop home).
+- Verified strict UTF-8 decoding and absence of replacement/C1-control characters across all 23 source, test, and script files; git diff whitespace checks passed.
+- Expo web preview is running at http://localhost:8081 in session 89472 with CI=1 EXPO_OFFLINE=1 and --max-workers 2. CI mode requires a restart after source edits. Cold startup/bundling took several minutes on this Windows machine.
+- Earlier validation also passed SDK dependency alignment and all 20 Expo Doctor checks; dependencies/configuration have not changed since those checks.
+- Delivery branch: feature/mobile-expo-refresh. No local implementation work remains in the recorded scope. Live backend integration and physical Android/iOS testing remain external validation requirements.
