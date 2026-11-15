@@ -16,3 +16,8 @@ User request: adapt the UniTask web repository to Expo mobile, retain JavaScript
 
 ## Recovery
 Read this file, git status, git log, then inspect any running Expo process before restarting. Never commit credentials, node_modules, or reference checkout. Update this file at each milestone.
+
+## Implementation checkpoint
+- Moved routes and supporting code into src; enabled checking JavaScript/JSX.
+- Refreshed campus home and task cards; lint tool installation in progress.
+- Initial recovery commit pushed successfully (32aab3d).

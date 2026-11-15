@@ -11,7 +11,7 @@ export function isValidDate(s) {
   return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
 }
 
-export default function TaskForm({ title: heading, initial, submitLabel, onSubmit }) {
+export default function TaskForm({ title: heading, initial = undefined, submitLabel, onSubmit }) {
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [category, setCategory] = useState(initial?.category ?? 'Education');
@@ -70,3 +70,4 @@ const s = StyleSheet.create({
   button: { backgroundColor: colors.primary, padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 12 },
   buttonText: { color: 'white', fontWeight: '700' },
 });
+
