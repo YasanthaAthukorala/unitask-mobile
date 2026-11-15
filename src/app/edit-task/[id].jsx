@@ -12,18 +12,18 @@ export default function EditTask() {
   useEffect(() => {
     getTask(id)
       .then((t) => {
-        if (!t || t.is_mine !== 1) { notify('Error', 'Only your own tasks can be edited'); router.back(); return; }
+        if (!t || t.is_mine !== 1) { notify('Error', 'Only your own services can be edited'); router.back(); return; }
         setTask(t);
       })
       .catch((e) => notify('Error', String(e)));
   }, [id]);
 
-  if (!task) return <Text style={{ padding: 20 }}>Loading task...</Text>;
+  if (!task) return <Text style={{ padding: 20 }}>Loading service...</Text>;
 
   async function save(values) {
     await updateTask(id, values);
-    notify('Saved', 'Task updated');
+    notify('Saved', 'Service updated');
     router.back();
   }
-  return <TaskForm title="Edit Task" submitLabel="Update Task" initial={task} onSubmit={save} />;
+  return <TaskForm title="Edit Service" submitLabel="Update service" initial={task} onSubmit={save} />;
 }
