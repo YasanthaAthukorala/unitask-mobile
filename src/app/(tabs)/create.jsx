@@ -1,3 +1,4 @@
+import { getSession } from '../../services/api';
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { addTask } from '../../database/taskRepository';
@@ -9,8 +10,9 @@ export default function Create() {
   async function save(values) {
     await addTask(values);
     setFormKey((k) => k + 1);
-    notify('Saved', 'Task stored offline');
+    notify('Saved', getSession()?'Task published to UniTask':'Task stored offline');
     router.navigate('/(tabs)/my-tasks');
   }
-  return <TaskForm key={formKey} title="Create New Task" submitLabel="Save Task Offline" onSubmit={save} />;
+  return <TaskForm key={formKey} title="Create New Task" submitLabel={getSession()?'Publish task':'Save Task Offline'} onSubmit={save} />;
 }
+

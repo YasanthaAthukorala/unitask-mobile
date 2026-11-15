@@ -1,9 +1,7 @@
-import { router } from 'expo-router';
+import { router , useFocusEffect } from 'expo-router';
 import { getSession, signOut } from '../../services/api';
-import { Pressable } from 'react-native';
+import { Pressable , ScrollView, Text, StyleSheet } from 'react-native';
 import { useCallback, useState } from 'react';
-import { ScrollView, Text, StyleSheet } from 'react-native';
-import { useFocusEffect } from 'expo-router';
 import { getTasks } from '../../database/taskRepository';
 import TaskCard from '../../components/TaskCard';
 import { colors } from '../../constants/theme';

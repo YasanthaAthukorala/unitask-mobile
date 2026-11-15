@@ -26,3 +26,12 @@ Read this file, git status, git log, then inspect any running Expo process befor
 
 - Online screens implemented: auth, owner CRUD, hire, reviews, notification polling/read actions. Live API not configured; online verification remains required.
 - Browser tooling installation and Expo web startup in progress. Search uses debounce and FlatList.
+
+- Fixed lint findings and one-time seeding. JSX typecheck passed before latest fixes; rerun final checks.
+- Commits pushed: 32aab3d, bda05c4, 2d10ae2. Expo startup session 17658 on port 8081; browser download session 55717.
+
+## Validation checkpoint
+- npx tsc --noEmit passed; npx expo install --check reports dependencies up to date.
+- Browser workflow initially failed with ERR_CONNECTION_REFUSED: Expo startup stalled before listening. Debug restart session 90430; investigate before declaring done.
+- README and Playwright workflow written; screenshots not captured yet. Installed Edge is available for browser testing.
+- Next: resolve Expo startup, run browser test, inspect screenshots, run final lint/typecheck, update this log and README validation results, commit/push.

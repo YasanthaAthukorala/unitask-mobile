@@ -45,7 +45,7 @@ export default function TaskForm({ title: heading, initial = undefined, submitLa
   }
 
   return (
-    <ScrollView style={s.page} contentContainerStyle={{ padding: 18 }} keyboardShouldPersistTaps="handled">
+    <ScrollView style={s.page} contentContainerStyle={{ padding: 20, width:'100%', maxWidth:760, alignSelf:'center', paddingBottom:40 }} keyboardShouldPersistTaps="handled">
       <Text style={s.heading}>{heading}</Text>
       <TextInput style={s.input} placeholder="Task title" value={title} onChangeText={setTitle} />
       <TextInput style={[s.input, { height: 100, textAlignVertical: 'top' }]} multiline placeholder="Description" value={description} onChangeText={setDescription} />
@@ -76,5 +76,6 @@ const s = StyleSheet.create({
   button: { backgroundColor: colors.primary, padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 12 },
   buttonText: { color: 'white', fontWeight: '700' },
 });
+
 
 

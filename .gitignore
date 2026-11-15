@@ -44,3 +44,7 @@ example
 
 # Local reference source
 .reference/
+
+# Browser test artifacts
+test-results/
+playwright-report/
