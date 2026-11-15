@@ -35,3 +35,8 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - Browser workflow initially failed with ERR_CONNECTION_REFUSED: Expo startup stalled before listening. Debug restart session 90430; investigate before declaring done.
 - README and Playwright workflow written; screenshots not captured yet. Installed Edge is available for browser testing.
 - Next: resolve Expo startup, run browser test, inspect screenshots, run final lint/typecheck, update this log and README validation results, commit/push.
+
+- Final expo lint and tsc checks passed (session 46147 exit 0). Browser is installed; first workflow failure was unavailable server, not a UI assertion. Reference checkout excluded from Metro crawl.
+
+- Expo Doctor: 20/20 checks passed. API transport contract test passed (mock fetch; not live backend).
+- Windows Metro watcher stalls after crawl; testing CI=1 EXPO_OFFLINE=1 startup, max-workers 2, session 59472. Next poll this session, then run npx playwright test.
