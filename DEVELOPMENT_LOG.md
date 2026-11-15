@@ -71,3 +71,22 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - Opened localhost in the user's browser. Startup logs: .expo/recovery-preview.log and .expo/recovery-preview-errors.log (ignored by Git).
 - Existing final screenshots and successful offline workflow verification remain valid; live backend/device validation still requires the user's API and devices.
 - Future recovery: read the latest section, check for a process/listener before starting a duplicate, and use the Windows preview command in README.md.
+
+
+## Service marketplace implementation - 2026-11-15
+- User requested a provider-led campus marketplace for paid services, courses and classes, including Sri Lankan phone numbers and email contacts.
+- Working on feature/service-marketplace. Preserve existing listings and favorites with an additive SQLite migration; retain the original API routes and preserve new metadata through a readable description footer for compatibility with the existing backend.
+- Form, contact validation, repository and migration implementation started. Next: marketplace screens, focused migration/contact/API/browser verification, screenshots, lint/typecheck, commit/push and preview refresh.
+
+
+## Service marketplace verified - 2026-11-15
+- Implemented and committed the marketplace source/tests as f24be07 on feature/service-marketplace.
+- Replaced task-facing screens with Browse, Offer, My Services and Service details; added Service/Course/Class types, Photography, LKR price units, availability and provider name.
+- New and edited listings require an email and Sri Lankan mobile/landline phone in both modes. Local/international formats normalize to +94 without truncation; details show selectable contacts and Call/Email links.
+- Existing SQLite listings, favorites, statuses and deadlines survive the additive versioned migration. New installations seed ten provider-led examples without real contact numbers; deleted seeds never return.
+- Original backend API endpoints/field allowlist remain compatible: additional service metadata round-trips through a readable description footer. No backend deployment or native dependencies were added.
+- Validation passed: npx expo lint; npx tsc --noEmit; npm test (6 tests covering contacts, API compatibility and real SQLite migrations); npm run test:web (1 workflow passed, final capture run 20.2 seconds, no page or console errors).
+- Browser workflow verified type/category/search filters, favorites, invalid email/phone rejection, paid-course creation, normalized contact links, persistence across reload, contact editing with a landline, completion and deletion.
+- Fixed a missing-contact render warning discovered by the browser check. Refreshed and visually reviewed six screenshots, including provider form/details; strict UTF-8 validation passed for all 27 source/test files and whitespace checks passed.
+- Current preview: http://localhost:8081/home, Expo session 61365, server PID 2216; CI=1 EXPO_OFFLINE=1 --max-workers 2. Restart after source edits and inspect the listener before launching another process.
+- Remaining external validation: deployed API integration and real Android/iOS dialer/email behavior. Shared publishing and in-app hiring require the configured backend; offline demo listings stay on the current device.
