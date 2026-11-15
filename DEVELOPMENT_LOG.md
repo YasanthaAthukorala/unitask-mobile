@@ -118,3 +118,11 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - No merge conflicts; merged application source, dependencies and tests match the verified feature branch exactly.
 - Fresh validation passed: npx expo lint, npx tsc --noEmit, and npm test (7 tests). The identical feature source previously passed both appearance and marketplace browser workflows.
 - Updated README to identify main as the branch containing marketplace, provider contact and light/dark/system appearance features.
+
+
+## Header wording updated - 2026-11-16
+- Changed the home brand from unitask. to UniTask and replaced the old campus/community tagline with Student-focused micro-task marketplace.
+- Added flexible header copy spacing and readable tagline sizing for narrow screens.
+- npx expo lint and npx tsc --noEmit passed. A focused browser check verified the text and bounds at 320px, 390px and desktop, including light/dark modes, with no runtime errors.
+- Refreshed four home screenshots and visually reviewed the narrow dark and mobile light layouts.
+- Preview: http://localhost:8081/home, Expo session 65780, CI/offline mode with max-workers 2.
