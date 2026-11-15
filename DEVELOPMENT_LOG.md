@@ -58,3 +58,16 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - Expo web preview is running at http://localhost:8081 in session 89472 with CI=1 EXPO_OFFLINE=1 and --max-workers 2. CI mode requires a restart after source edits. Cold startup/bundling took several minutes on this Windows machine.
 - Earlier validation also passed SDK dependency alignment and all 20 Expo Doctor checks; dependencies/configuration have not changed since those checks.
 - Delivery branch: feature/mobile-expo-refresh. No local implementation work remains in the recorded scope. Live backend integration and physical Android/iOS testing remain external validation requirements.
+
+## Shutdown recovery resumed - 2026-11-15
+- Verified clean working tree and GitHub feature branch at 4b54d1759b912936a68dfd65574f45a80cc896e7.
+- Existing final screenshots and passing browser-test record survived shutdown.
+- Restarting Expo with the documented CI/offline workaround on port 8081 (session 56707). Fresh lint/typecheck running in session 70062.
+- Preview probe ran before the server listened and got connection refused; retry after startup completes. No application source changes needed.
+
+## Latest recovery continuation - 2026-11-15
+- No source changes were needed after interruption. Fresh npm run lint and npm run typecheck both passed (session 58528, exit 0).
+- Expo restored as detached background PID 2548 with CI=1 EXPO_OFFLINE=1 and --max-workers 2; server reports Waiting on http://localhost:8081.
+- Opened localhost in the user's browser. Startup logs: .expo/recovery-preview.log and .expo/recovery-preview-errors.log (ignored by Git).
+- Existing final screenshots and successful offline workflow verification remain valid; live backend/device validation still requires the user's API and devices.
+- Future recovery: read the latest section, check for a process/listener before starting a duplicate, and use the Windows preview command in README.md.
