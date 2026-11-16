@@ -31,6 +31,18 @@ Run `npm run web` and open **http://localhost:8081** (or the port printed by Exp
 
 Screenshots come from the running Expo web application at a mobile viewport. Desktop preview: [home screenshot](docs/screenshots/home-desktop.png).
 
+## Requests and owner notifications
+
+Opening a listing does not send a notification. A student presses **Request course**, **Request class** or **I'm interested** and can add a message of up to 500 characters. The provider receives an unread notification with the listing, sender details and message. Sending a request leaves the listing available; it does not charge money or confirm a booking.
+
+Use the home bell or **Profile > Notifications**. The unread count appears on the bell and Profile tab. Providers can mark individual/all notifications as read, open the service, and use available sender email/phone links. Repeated requests from the same profile/account do not duplicate a notification or reset its read state. Owners cannot request their own listing. Notification text remains available after a listing is deleted.
+
+The inbox refreshes on entry, on foreground resume, and every 10 seconds while the app is active. These are **in-app notifications**, not operating-system push notifications, SMS or automatically sent emails.
+
+| Student request | Provider inbox |
+| --- | --- |
+| ![Interest request](docs/screenshots/interest-request-mobile.png) | ![Provider notification](docs/screenshots/provider-inbox-mobile.png) |
+
 ## Appearance
 
 Open **Profile > Appearance** and choose **System**, **Light** or **Dark**. System is the default and follows device/browser appearance changes while the app is open. Explicit light/dark choices override the device preference and persist across app restarts in the existing SQLite metadata table.
@@ -58,19 +70,29 @@ For a physical device, connect the phone and computer to the same network and us
 
 ## Two modes
 
-**Offline demo (default):** SQLite persists your service/course listings, provider contact details, pricing units, availability, edits, booking status and favorites on the current device. Ten sample offers seed once on new installations. Sample providers have no live phone/email, so their contact buttons remain hidden. Old installations retain their existing listings and favorites; the additive migration supplies safe defaults for the new fields and preserves old deadlines without showing them in the service form. No data reset is required. Deleting listings does not cause them to reappear.
+**Offline local profiles (default / ICA demonstration):** All listings, requests, notifications, favorites and appearance preferences are stored on the current device in SQLite. No public API or online database is used. Ten sample offers seed once on new installations. Existing listings, deadlines, favorites and theme settings survive the versioned migration.
 
-Offline offers stay on the current device. For shared publishing and the in-app hiring action, configure the backend and sign in. Browser SQLite needs WebAssembly and cross-origin isolation; Metro supplies the required headers.
+Open **Profile > Switch local profile**. Use **Me** as a provider, switch to **Student** (or create a learner profile with email and an optional Sri Lankan phone), and send a request. Switch back to the provider to see the inbox. Local profiles are a demonstration on one device, not password-protected online accounts. Favorites and listing ownership are separate for each local profile. Sample providers also have local profiles, so their inboxes can be inspected in the demo.
 
-**Online accounts:** copy `.env.example` to `.env.local`, set `EXPO_PUBLIC_API_URL` to your running UniTask Express API origin, and restart Expo. Open **Profile > Sign in / Register**. The API supports registration/login, shared listings, owner editing/deletion, hiring, completed-service reviews, and notifications (refreshed every 30 seconds while that screen is open).
+**Optional shared accounts:** This repository includes a private Node/SQLite API for accounts and notifications shared across clients. No third-party API, MongoDB or online database is required.
 
-```dotenv
-EXPO_PUBLIC_API_URL=https://your-unitask-api.example.com
+```sh
+# Terminal 1; verified with Node.js 24.13
+npm run api
+# API defaults to http://127.0.0.1:8000
 ```
 
-The existing API already stores contact email and phone. To retain compatibility with its original field allowlist, the mobile adapter stores listing type, pricing unit, availability and provider display name in a readable service-details footer in the description. The mobile app decodes the footer when reading/editing; older web clients display it as readable text. Legacy API listings without a footer default to Service / Per project. The original API routes and booking statuses are retained.
+Copy `.env.example` to `.env.local`, set `EXPO_PUBLIC_API_URL=http://127.0.0.1:8000`, and restart Expo. Open **Profile > Sign in / Register**. Register a provider, publish a course/service, and use a second account to send a request. Online listings are separate from the device's offline sample data and are not uploaded automatically.
 
-For Android emulators use `http://10.0.2.2:8000`; for phones use your computer's LAN IP instead of localhost. Configure MongoDB and JWT secrets on the server, following the web repository instructions. Never put server secrets into this app; `EXPO_PUBLIC_*` values are public. Use HTTPS for deployed APIs. Sign-in tokens stay in memory and clear on sign-out/restart. Offline listings are not automatically uploaded. Favorites remain an offline feature.
+The API stores accounts, salted password hashes, hashed session tokens, shared listings and notifications in `.unitask-api/data.sqlite`. This directory is ignored by Git and excluded from Metro. Back it up if retaining shared-account data. The app keeps its sign-in token only in memory; sign in again after restarting the app.
+
+For two phones/computers on the same LAN, start the API with `HOST=0.0.0.0`, set each app's API URL to the server computer's LAN IP (for example, `http://192.168.1.10:8000`), and use the same network. Android emulators can use `http://10.0.2.2:8000`. A LAN connection is sufficient; internet/cloud services are unnecessary. Use HTTPS when hosting beyond local development.
+
+```powershell
+$env:HOST='0.0.0.0'; npm run api
+```
+
+The original API field names/routes remain compatible. Extra listing metadata is retained in a readable description footer for older clients. A previously configured Express backend needs the interest endpoints described in [backend/README.md](backend/README.md); the included private API implements them.
 
 ## Checks
 
@@ -85,11 +107,11 @@ npx expo install --check
 npx expo-doctor
 ```
 
-Unit tests cover phone/email validation, API contact/metadata round trips, preservation of an old SQLite database, migration idempotency and one-time seeding. Database tests use Node's built-in SQLite. API tests mock transport rather than a deployed server.
+Tests cover contacts, profile ownership, recipient-only inboxes, duplicate protection, old-database migration, safe read-state updates and one-time seeding. Real HTTP tests verify the included private API with separate users, persistent SQLite accounts/notifications and server restarts; the legacy adapter also retains its mocked contract test.
 
-Browser tests use installed Microsoft Edge by default. Alternatively install Chromium with `npx playwright install chromium` and set `PLAYWRIGHT_CHANNEL=chromium`. The marketplace workflow checks filters, favorites, invalid contacts, publishing a paid course, contact links, reload persistence, owner edits, status changes and deletion. The appearance workflow verifies saved manual choices, live system changes, themed screens/inputs and draft preservation. Both capture the screenshots above. It does not place calls or send email. Physical Android/iOS appearance rendering, system bars, keyboard/link handling and live backend behavior require separate device/server validation.
+Browser tests use installed Microsoft Edge by default. Alternatively install Chromium with `npx playwright install chromium` and set `PLAYWRIGHT_CHANNEL=chromium`. The marketplace workflow checks filters, favorites, invalid contacts, publishing a paid course, contact links, reload persistence, owner edits, status changes and deletion. The appearance workflow verifies saved manual choices, live system changes, themed screens/inputs and draft preservation. The local notification workflow blocks backend calls and verifies profile creation/switching, owner-only delivery, contact links, read state and reload persistence. The shared-account workflow signs in two independent browser contexts and sends a request through the real private API; it requires PLAYWRIGHT_API_URL. The workflows capture the screenshots above without placing calls or sending email. Physical Android/iOS appearance rendering, system bars, keyboard/link handling and cross-phone behavior require separate device validation.
 
-Validation on 2026-11-15: lint, JavaScript typecheck, all 7 unit/database/API tests and both browser workflows passed. Appearance captures were visually reviewed and the marketplace screenshots refreshed.
+Validation on 2026-11-16: lint, JavaScript typecheck and all 13 unit/database/real HTTP tests passed. Appearance, marketplace, offline notification and two-account API browser workflows passed. Request and inbox screenshots were visually reviewed.
 
 ## Source layout
 
@@ -99,6 +121,8 @@ src/components/   Shared listing cards and service form
 src/constants/    Theme, categories, offering types and price units
 src/database/     SQLite migration/seeding and repository/API adapter
 src/services/     API transport and memory-only session
+src/context/      Local profile and unread inbox state
+backend/          Optional private Node/SQLite API
 src/theme/        Shared appearance state and persistent preferences
 src/data/         Offline sample services, courses and classes
 src/utils/        Contact validation, API compatibility and dialogs
