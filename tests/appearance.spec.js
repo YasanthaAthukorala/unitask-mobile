@@ -53,6 +53,7 @@ test('appearance persists, covers screens, follows the system and preserves a fo
   await expect(page.locator('body')).toHaveCSS('background-color',lightBackground);
   await page.goto('/home');
   await expect(page.getByRole('button',{name:'Browse services',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'View Presentation Slide Design',exact:true})).toBeVisible();
   await page.screenshot({path:'docs/screenshots/home-light-mobile.png',fullPage:true});
 
   await page.goto('/profile');

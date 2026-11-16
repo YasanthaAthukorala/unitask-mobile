@@ -152,3 +152,5 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - Current hidden helpers: Expo PID 3916 at http://localhost:8081, API PID 2516 at http://127.0.0.1:8000; logs under .expo/interest-preview* and .expo/interest-api*. Expo uses CI=1, EXPO_OFFLINE=1, max-workers 2 and EXPO_PUBLIC_API_URL pointing to the private API. Inspect listeners before restarting helpers.
 - Physical Android/iOS appearance, keyboard/contact-link behavior and delivery between actual phones remain unverified. The optional API is available locally, not deployed remotely. Sign-in tokens remain memory-only in the app.
 - Delivering as a feature branch; no new merge into main was requested for this feature.
+
+- Final screenshot follow-up: wait for seeded home listings before capturing light/mobile/desktop home previews. Both affected browser workflows passed again; visually confirmed 10 available offers and 4 classes/courses in the refreshed captures.
