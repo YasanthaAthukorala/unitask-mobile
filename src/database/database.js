@@ -2,6 +2,7 @@ import * as SQLite from 'expo-sqlite';
 import { migrateDatabase, seedDatabase } from './migrations';
 async function openAndInitialize() {
   const db = await SQLite.openDatabaseAsync('unitask.db');
+  await db.execAsync('PRAGMA foreign_keys = ON');
   await migrateDatabase(db);
   await seedDatabase(db);
   return db;

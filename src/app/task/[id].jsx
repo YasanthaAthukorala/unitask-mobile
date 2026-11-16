@@ -1,3 +1,6 @@
+import InterestRequest from '../../components/InterestRequest';
+import { useLocalProfile } from '../../context/LocalProfileProvider';
+import { useSession } from '../../services/useSession';
 import { useTheme, useThemeStyles } from '../../theme/ThemeProvider';
 import { useCallback, useState } from 'react';
 import { ScrollView, Text, Pressable, StyleSheet, TextInput, View } from 'react-native';
@@ -11,16 +14,18 @@ import { confirmAction } from '../../utils/dialog';
 export default function TaskDetails() {
   const {colors,scheme}=useTheme();
   const s=useThemeStyles(createStyles);
+  const {profile}=useLocalProfile(),session=useSession();
   const {id}=useLocalSearchParams();
   const [task,setTask]=useState(undefined), [error,setError]=useState(''), [busy,setBusy]=useState(false);
   const [stars,setStars]=useState('5'), [comment,setComment]=useState('');
   const load=useCallback(() => {
+    if(!profile.id&&!session?.user?._id)return;
     let active=true;
     setTask(undefined);
     getTask(id).then(t => {if(active){setTask(t ?? null);setError('');}})
       .catch(e => {if(active){setError(e.message);setTask(null);}});
     return () => {active=false;};
-  },[id]);
+  },[id,profile.id,session?.user?._id]);
   useFocusEffect(load);
   async function action(work) {
     if(busy) return;
@@ -58,6 +63,7 @@ export default function TaskDetails() {
             accessibilityLabel="Email provider" style={s.contactLink}>Email provider</Link></>}
         {!phone && !isValidEmail(email) && <Text style={s.hint}>Contact details have not been added to this listing yet.</Text>}
       </View>
+      {!task.is_mine&&<InterestRequest key={String(task.id)+profile.id+(session?.user?._id || '')} service={task}/>}
       {!getSession() && button(task.is_favorite ? 'Remove favorite' : 'Save to favorites',() => action(() => toggleFavorite(id,task.is_favorite)))}
       {getSession() && !task.is_mine && task.status==='Available' && button('Hire this service',() =>
         confirmAction('Hire service','Confirm booking this campus service?','Hire',() => action(() => request(`/api/tasks/${id}/hire`,{method:'POST'}))))}

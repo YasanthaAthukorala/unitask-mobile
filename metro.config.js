@@ -4,6 +4,8 @@ const config = getDefaultConfig(__dirname);
 // Reference checkout is not app source; avoid crawling its dependencies.
 config.resolver.blockList = [/[/\\\\]\.reference[/\\\\].*/];
 
+config.resolver.blockList.push(/[/\\]\.unitask-api[/\\].*/);
+
 // expo-sqlite on web needs the wa-sqlite .wasm file to be treated as an asset
 config.resolver.assetExts.push('wasm');
 

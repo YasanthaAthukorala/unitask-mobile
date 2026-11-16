@@ -36,7 +36,7 @@ test('upgrading an existing database preserves owner listings, favorites and dea
     assert.equal(after.priceUnit,'Per project');
     assert.equal(after.contactEmail,'');assert.equal(after.contactPhone,'');
     assert.equal(connection.prepare('SELECT COUNT(*) AS n FROM tasks').get().n,1);
-    assert.equal(connection.prepare('PRAGMA user_version').get().user_version,1);
+    assert.equal(connection.prepare('PRAGMA user_version').get().user_version,2);
     // The migrated contact fields are writable without rebuilding or deleting the row.
     await adapter.runAsync('UPDATE tasks SET contactEmail=?,contactPhone=?,listingType=?,priceUnit=? WHERE id=?',
       ['tutor@example.com','+94112345678','Class','Per hour',before.id]);
