@@ -126,3 +126,37 @@ Read this file, git status, git log, then inspect any running Expo process befor
 - npx expo lint and npx tsc --noEmit passed. A focused browser check verified the text and bounds at 320px, 390px and desktop, including light/dark modes, with no runtime errors.
 - Refreshed four home screenshots and visually reviewed the narrow dark and mobile light layouts.
 - Preview: http://localhost:8081/home, Expo session 65780, CI/offline mode with max-workers 2.
+
+
+## Owner interest notifications - 2026-11-16
+- User selected explicit I am interested / Request course submission and both offline/online modes. Subsequent steering: fit the app and ICA requirements.
+- Building offline local profiles, owner-specific requests/inbox, unread badges, duplicate protection and optional private SQLite HTTP API for cross-device accounts without public APIs/online databases. No email/SMS/push delivery or payment processing.
+- Working on feature/interest-notifications. Core schema/repository/context work started; remaining UI, private API, tests, validation, docs and delivery.
+
+
+## Interest notification recovery checkpoint - 2026-11-16
+- UI, migration v2, local profile ownership/favorites, request panel, owner inbox/badges and optional Node private SQLite API are implemented.
+- Lint, typecheck and all 13 unit/real SQLite/HTTP tests passed. Theme and marketplace browser workflows passed before session interruption; the two notification workflows still need a complete recorded run.
+- No preview/API processes survived interruption. Restarting them as hidden detached helpers with .expo logs, then running all four browser workflows (including local profile creation and separate real HTTP accounts).
+- Remaining: fix any browser issues, document new modes/API, review screenshots, final checks, commit/push feature/interest-notifications and leave previews available.
+
+## Interest notifications verified - 2026-11-16
+- Implemented on feature/interest-notifications: explicit Request course / Request class / I'm interested submission, optional 500-character message, owner-only inbox, sender contacts, home/Profile unread badges, individual/all read actions, duplicate protection and retained notification text after listing deletion.
+- Schema v2 preserves existing listings/deadlines/favorites and adds persistent local profiles, profile-specific favorites/ownership and local interest notifications. Profile > Switch local profile supports the offline ICA demonstration without a backend. New profiles accept an email and optional Sri Lankan phone.
+- Included an optional private Node/SQLite HTTP server for separate shared accounts/clients. No server packages, public API, cloud database or native dependencies added. Accounts/password hashes/token hashes/listings/notifications persist in ignored .unitask-api/data.sqlite, which Metro excludes.
+- Foreground inbox polling runs every 10 seconds and refreshes on entry/resume. Requests do not charge money or confirm bookings. These are in-app notifications; OS push, SMS and automated email are not implemented.
+- Final required checks passed: npm run lint; npm run typecheck; npm test (13 tests). The focused HTTP tests also passed after correcting the Sinhala fixture to explicit Unicode escapes.
+- Final npm run test:web passed all 4 workflows in 2.1 minutes with no captured page/console errors. Offline verification blocked API calls, created/switched learner profiles, verified owner-only delivery/contact links and read-state persistence. Shared-account verification signed in two separate browser contexts and delivered a request through the real private API.
+- Corrected test navigation timing and selected the active Expo Router screen when retained home/browse cards shared a label. One earlier rerun started before Metro listened; reran after the preview was ready. No forced clicks or arbitrary browser sleeps.
+- Refreshed home/appearance screenshots and captured/visually reviewed the real mobile request and provider inbox screens. README and backend/README.md document both modes, setup, test commands and limitations.
+- Current hidden helpers: Expo PID 3916 at http://localhost:8081, API PID 2516 at http://127.0.0.1:8000; logs under .expo/interest-preview* and .expo/interest-api*. Expo uses CI=1, EXPO_OFFLINE=1, max-workers 2 and EXPO_PUBLIC_API_URL pointing to the private API. Inspect listeners before restarting helpers.
+- Physical Android/iOS appearance, keyboard/contact-link behavior and delivery between actual phones remain unverified. The optional API is available locally, not deployed remotely. Sign-in tokens remain memory-only in the app.
+- Delivering as a feature branch; no new merge into main was requested for this feature.
+
+- Final screenshot follow-up: wait for seeded home listings before capturing light/mobile/desktop home previews. Both affected browser workflows passed again; visually confirmed 10 available offers and 4 classes/courses in the refreshed captures.
+
+## Interest notifications merged to main - 2026-11-16
+- User requested merging branches and committing. Fetched origin; main was already synchronized and earlier mobile-refresh/marketplace branches were already included.
+- Merged feature/interest-notifications through a10b5c8 into main with an explicit merge commit, retaining all three feature commits and their history. No conflicts.
+- Merged application source, backend, dependencies, configuration and tests match the verified feature branch. Updated the README to identify main as containing owner interest notifications.
+- Fresh validation passed on merged main: npm run lint, npm run typecheck and npm test (13 tests). Identical feature source previously passed all four browser workflows; screenshot timing checks also passed in the subsequent focused rerun.

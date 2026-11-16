@@ -5,6 +5,7 @@ test('students publish paid courses with persistent Sri Lankan provider contacts
   await page.goto('/home');
   await expect(visibleText('Campus services & courses')).toBeVisible();
   await expect(page.getByRole('button',{name:'Browse services'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'View Presentation Slide Design',exact:true})).toBeVisible();
   await page.screenshot({path:'docs/screenshots/home-mobile.png',fullPage:true});
 
   await page.goto('/explore?category=Photography');
@@ -86,6 +87,7 @@ test('students publish paid courses with persistent Sri Lankan provider contacts
   await page.screenshot({path:'docs/screenshots/explore-mobile.png',fullPage:true});
   await page.setViewportSize({width:1440,height:1000});await page.goto('/home');
   await expect(visibleText('Campus services & courses')).toBeVisible();
+  await expect(page.getByRole('button',{name:'View Presentation Slide Design',exact:true})).toBeVisible();
   await page.screenshot({path:'docs/screenshots/home-desktop.png',fullPage:true});
   expect(errors).toEqual([]);
 });

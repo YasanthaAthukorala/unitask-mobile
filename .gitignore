@@ -48,3 +48,6 @@ example
 # Browser test artifacts
 test-results/
 playwright-report/
+
+# Private optional SQLite API data (accounts, sessions and notifications)
+.unitask-api/

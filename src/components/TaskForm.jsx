@@ -1,3 +1,4 @@
+import { useLocalProfile } from '../context/LocalProfileProvider';
 import { useTheme, useThemeStyles } from '../theme/ThemeProvider';
 import { getSession } from '../services/api';
 import { useState } from 'react';
@@ -9,6 +10,7 @@ import { validateService } from '../utils/serviceDetails';
 export default function TaskForm({ title: heading, initial = undefined, submitLabel, onSubmit }) {
   const {colors,scheme}=useTheme();
   const s=useThemeStyles(createStyles);
+  const {profile}=useLocalProfile();
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [category, setCategory] = useState(initial?.category ?? 'Education');
@@ -16,8 +18,8 @@ export default function TaskForm({ title: heading, initial = undefined, submitLa
   const [listingType, setListingType] = useState(initial?.listingType ?? 'Service');
   const [priceUnit, setPriceUnit] = useState(initial?.priceUnit ?? 'Per project');
   const [availability, setAvailability] = useState(initial?.availability ?? '');
-  const [providerName, setProviderName] = useState(initial?.student_name ?? getSession()?.user?.name ?? '');
-  const [contactEmail, setContactEmail] = useState(initial?.contactEmail ?? getSession()?.user?.email ?? '');
+  const [providerName, setProviderName] = useState(initial?.student_name ?? getSession()?.user?.name ?? profile.name);
+  const [contactEmail, setContactEmail] = useState(initial?.contactEmail ?? getSession()?.user?.email ?? profile.email);
   const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? '');
   const [saving, setSaving] = useState(false), [error, setError] = useState('');
 

@@ -1,8 +1,11 @@
 import { readApiService } from '../utils/serviceDetails.js';
 let session = null;
+const listeners=new Set();
+export function subscribeSession(listener){listeners.add(listener);return()=>listeners.delete(listener);}
+function setSession(value){session=value;for(const listener of listeners)listener();}
 export const apiUrl = (process.env.EXPO_PUBLIC_API_URL || '').replace(/\/$/, '');
 export function getSession() { return session; }
-export function signOut() { session = null; }
+export function signOut() { setSession(null); }
 export async function request(path, options = {}) {
   if (!apiUrl) throw new Error('Set EXPO_PUBLIC_API_URL to your UniTask API origin and restart Expo.');
   const controller = new AbortController();
@@ -17,7 +20,7 @@ export async function request(path, options = {}) {
 }
 export async function authenticate(mode, values) {
   const result = await request(`/api/auth/${mode}`, {method:'POST',body:JSON.stringify(values)});
-  session = result;
+  setSession(result);
   return result;
 }
 export function normalizeTask(t) {

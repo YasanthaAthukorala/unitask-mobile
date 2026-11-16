@@ -45,7 +45,8 @@
     "typecheck": "tsc --noEmit",
     "test:api": "node --test tests/api.test.cjs",
     "test:web": "playwright test",
-    "test": "node --test tests/api.test.cjs tests/services.test.cjs tests/migrations.test.cjs"
+    "test": "node --test tests/api.test.cjs tests/services.test.cjs tests/migrations.test.cjs tests/notifications.test.cjs tests/backend.test.cjs",
+    "api": "node backend/server.cjs"
   },
   "private": true
 }
